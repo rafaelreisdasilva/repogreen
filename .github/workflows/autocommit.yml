@@ -1,13 +1,12 @@
 name: Auto commit
 
 on:
-
   push:
     branches:
-      - master
+      - main
       
   schedule:
-  - cron: "0 7,9,11 * * 1,3" # See https://crontab.guru/#0_7,9,11_*_*_1,3
+    - cron: "0 7,9,11 * * 1,3" # See https://crontab.guru/#0_7,9,11_*_*_1,3
 
 jobs:
   auto_commit:
@@ -15,14 +14,16 @@ jobs:
     steps:
       - name: DEBUG 
         run: echo "::debug::Ref = ${{github.ref}}"
-      - uses: actions/checkout@v3      
+        
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
-         persist-credentials: false
-         fetch-depth: 0
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Modify last update
         run: |
-          d=`date '+%Y-%m-%dT%H:%M:%SZ'`
+          d=$(date '+%Y-%m-%dT%H:%M:%SZ')
           echo $d > LAST_UPDATED
           
       - name: Commit changes
@@ -31,18 +32,9 @@ jobs:
           git config --local user.name "rafalreisdasilva"
           git add -A
           
-          arr[0]="chore(bot): 😂 auto commit"
-          arr[1]="chore(bot): 😱 auto commit"
-          arr[2]="chore(bot): 👿 auto commit"
-          arr[3]="chore(bot): 💩 auto commit"
-          arr[4]="chore(bot): 🙏 auto commit"
-          arr[5]="chore(bot): 🙈 auto commit"
-          arr[6]="chore(bot): 🐐 auto commit"
-          arr[7]="chore(bot): 🤖 auto commit"
-          arr[8]="chore(bot): 🟩 auto commit"
-          arr[9]="chore(bot): 👻 auto commit"
+          arr=("chore(bot): 😂 auto commit" "chore(bot): 😱 auto commit" "chore(bot): 👿 auto commit" "chore(bot): 💩 auto commit" "chore(bot): 🙏 auto commit" "chore(bot): 🙈 auto commit" "chore(bot): 🐐 auto commit" "chore(bot): 🤖 auto commit" "chore(bot): 🟩 auto commit" "chore(bot): 👻 auto commit")
           
-          rand=$[$RANDOM % ${#arr[@]}]
+          rand=$((RANDOM % ${#arr[@]}))
           
           git commit -m "${arr[$rand]}"
           
